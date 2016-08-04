@@ -39,13 +39,20 @@ public class DefaultServerActivator extends AbstractUIPlugin {
 
 		final boolean enabled = getPreferenceStore().getBoolean(
 				PreferenceConstants.PREF_PY4J_ACTIVE);
-		if (!enabled)
+		boolean override = Boolean.getBoolean(
+				PreferenceConstants.PREF_PY4J_ACTIVE); // They can override the default using -DPREF_PY4J_ACTIVE=...
+		if (!enabled && !override)
 			return;
 
 		int defaultPort = getPreferenceStore().getInt(
 				PreferenceConstants.PREF_DEFAULT_PORT);
 		int defaultCallBackPort = getPreferenceStore().getInt(
 				PreferenceConstants.PREF_DEFAULT_CALLBACK_PORT);
+
+		if (defaultPort < 1)
+			defaultPort = GatewayServer.DEFAULT_PORT;
+		if (defaultCallBackPort < 1)
+			defaultCallBackPort = GatewayServer.DEFAULT_PYTHON_PORT;
 
 		if (getPreferenceStore().getBoolean(
 				PreferenceConstants.PREF_USE_SWT_DISPLAY_TREAD)) {
