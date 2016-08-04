@@ -47,11 +47,20 @@ public class DefaultServerActivator extends AbstractUIPlugin {
 		int defaultCallBackPort = getPreferenceStore().getInt(
 				PreferenceConstants.PREF_DEFAULT_CALLBACK_PORT);
 
+		if (!isPortFree(defaultPort)) {
+			defaultPort = getFreePort(defaultPort);
+			getPreferenceStore().setValue(PreferenceConstants.PREF_DEFAULT_PORT, defaultPort);
+		}
+		if (!isPortFree(defaultCallBackPort)) {
+			defaultCallBackPort = getFreePort(defaultCallBackPort);
+			getPreferenceStore().setValue(PreferenceConstants.PREF_DEFAULT_CALLBACK_PORT, defaultCallBackPort);
+		}
+
 		if (getPreferenceStore().getBoolean(
 				PreferenceConstants.PREF_USE_SWT_DISPLAY_TREAD)) {
 
-			server = new SWTGatewayServer(this, getFreePort(defaultPort),
-					getFreePort(defaultCallBackPort),
+			server = new SWTGatewayServer(this, defaultPort,
+					defaultCallBackPort,
 					GatewayServer.DEFAULT_CONNECT_TIMEOUT,
 					GatewayServer.DEFAULT_READ_TIMEOUT, null);
 
@@ -60,7 +69,12 @@ public class DefaultServerActivator extends AbstractUIPlugin {
 					GatewayServer.DEFAULT_CONNECT_TIMEOUT,
 					GatewayServer.DEFAULT_READ_TIMEOUT, null);
 		}
-		server.start();
+
+		try {
+			server.start();
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 	}
 
 	/**
@@ -151,5 +165,4 @@ public class DefaultServerActivator extends AbstractUIPlugin {
 			}
 		});
 	}
-
 }
