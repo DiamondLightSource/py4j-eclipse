@@ -7,7 +7,7 @@ Bundle-Activator: org.py4j.defaultserver.DefaultServerActivator
 Bundle-Vendor: Py4J
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
- py4j-java
+ net.sf.py4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.py4j.defaultserver,
