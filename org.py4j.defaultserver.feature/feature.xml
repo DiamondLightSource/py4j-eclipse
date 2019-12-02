@@ -55,7 +55,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    </url>
 
    <requires>
-      <import feature="org.py4j.feature" version="0.10.6"/>
+      <import feature="org.py4j.feature" version="0.10.8"/>
    </requires>
 
    <plugin

@@ -57,7 +57,7 @@ public class SWTGatewayConnection extends GatewayConnection {
 			logger.log(Level.WARNING,
 					"Error occurred while waiting for a command.", e);
 			if (executing && writer != null) {
-				quietSendError(writer, e);
+				quietSendFatalError(writer, e);
 			}
 		} finally {
 			NetworkUtil.quietlyClose(socket);
