@@ -7,7 +7,7 @@
       <actionSet
             label="Sample Action Set"
             visible="true"
-            id="net.sf.py4j.example.actionSet">
+            id="org.py4j.example.actionSet">
          <menu
                label="Py4J &amp;Menu"
                id="sampleMenu">
@@ -18,11 +18,11 @@
          <action
                label="&amp;Start Py4J"
                icon="icons/sample.gif"
-               class="net.sf.py4j.example.actions.SampleAction"
+               class="org.py4j.example.actions.SampleAction"
                tooltip="Hello, Eclipse world"
                menubarPath="sampleMenu/sampleGroup"
                toolbarPath="sampleGroup"
-               id="net.sf.py4j.example.actions.SampleAction">
+               id="org.py4j.example.actions.SampleAction">
          </action>
       </actionSet>
    </extension>

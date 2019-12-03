@@ -1,4 +1,4 @@
-package net.sf.py4j.example;
+package org.py4j.example;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -9,7 +9,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "net.sf.py4j.example";
+	public static final String PLUGIN_ID = "org.py4j.example";
 
 	// The shared instance
 	private static Activator plugin;

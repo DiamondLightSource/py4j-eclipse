@@ -1,4 +1,4 @@
-package net.sf.py4j.example.actions;
+package org.py4j.example.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
