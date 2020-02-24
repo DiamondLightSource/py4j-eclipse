@@ -1,3 +1,0 @@
-[submodule "org.py4j/py4j"]
-	path = org.py4j/py4j
-	url = git@github.com:bartdag/py4j.git
