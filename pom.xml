@@ -15,7 +15,6 @@
 	</parent>
 
 	<modules>
-		<module>org.py4j</module>
 		<module>org.py4j.defaultserver</module>
 		<module>org.py4j.defaultserver.feature</module>
 		<module>org.py4j.example</module>
