@@ -40,24 +40,23 @@ public class DefaultServerActivator extends AbstractUIPlugin {
 
 		final boolean enabled = store.getBoolean(PreferenceConstants.PREF_PY4J_ACTIVE);
 		boolean override = Boolean.getBoolean(PreferenceConstants.PREF_PY4J_ACTIVE); // They can override the default using -DPREF_PY4J_ACTIVE=...
-		if (!enabled && !override)
+		if (!enabled && !override) {
 			return;
-
-		int defaultPort = store.getInt(PreferenceConstants.PREF_DEFAULT_PORT);
-		if (defaultPort < 1) {
-			defaultPort = GatewayServer.DEFAULT_PORT;
 		}
-		if (!isPortFree(defaultPort)) {
-			defaultPort = getFreePort(defaultPort);
+
+		// We override any port setting because we record the auto-generated one.
+		store.setValue(PreferenceConstants.PREF_DEFAULT_PORT, GatewayServer.DEFAULT_PORT);
+		store.setValue(PreferenceConstants.PREF_DEFAULT_CALLBACK_PORT, GatewayServer.DEFAULT_PYTHON_PORT);
+
+		int defaultPort = GatewayServer.DEFAULT_PORT;
+		int defaultCallBackPort = GatewayServer.DEFAULT_PYTHON_PORT;
+		if (!isPortFree(defaultPort)) { // find and allocate free ports in pairs
+			defaultPort = getFreePort(defaultPort, 2);
 			store.setValue(PreferenceConstants.PREF_DEFAULT_PORT, defaultPort);
-		}
-
-		int defaultCallBackPort = store.getInt(PreferenceConstants.PREF_DEFAULT_CALLBACK_PORT);
-		if (defaultCallBackPort < 1) {
-			defaultCallBackPort = GatewayServer.DEFAULT_PYTHON_PORT;
-		}
-		if (!isPortFree(defaultCallBackPort)) {
-			defaultCallBackPort = getFreePort(defaultCallBackPort);
+			defaultCallBackPort = getFreePort(defaultPort + 1, 1);
+			store.setValue(PreferenceConstants.PREF_DEFAULT_CALLBACK_PORT, defaultCallBackPort);
+		} else if (!isPortFree(defaultCallBackPort)) {
+			defaultCallBackPort = getFreePort(defaultCallBackPort, 2);
 			store.setValue(PreferenceConstants.PREF_DEFAULT_CALLBACK_PORT, defaultCallBackPort);
 		}
 
@@ -65,7 +64,6 @@ public class DefaultServerActivator extends AbstractUIPlugin {
 			server = new SWTGatewayServer(this, defaultPort, defaultCallBackPort,
 					GatewayServer.DEFAULT_CONNECT_TIMEOUT,
 					GatewayServer.DEFAULT_READ_TIMEOUT, null);
-
 		} else {
 			server = new GatewayServer(this, defaultPort, defaultCallBackPort,
 					GatewayServer.DEFAULT_CONNECT_TIMEOUT,
@@ -87,13 +85,15 @@ public class DefaultServerActivator extends AbstractUIPlugin {
 	 * gateway server to bind to the next available port)
 	 * 
 	 * @param startPort
+	 * @param increment
 	 * @return
 	 */
-	public static int getFreePort(final int startPort) {
+	public static int getFreePort(final int startPort, final int increment) {
 
 		int port = startPort;
-		while (!isPortFree(port))
-			port++;
+		while (!isPortFree(port)) {
+			port += increment;
+		}
 
 		return port;
 	}
