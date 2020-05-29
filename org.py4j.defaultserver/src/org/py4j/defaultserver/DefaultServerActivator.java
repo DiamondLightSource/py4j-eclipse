@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -35,26 +36,33 @@ public class DefaultServerActivator extends AbstractUIPlugin {
 		super.start(bundleContext);
 		DefaultServerActivator.context = bundleContext;
 		activator = this;
+		IPreferenceStore store = getPreferenceStore();
 
-		final boolean enabled = getPreferenceStore().getBoolean(PreferenceConstants.PREF_PY4J_ACTIVE);
+		final boolean enabled = store.getBoolean(PreferenceConstants.PREF_PY4J_ACTIVE);
 		boolean override = Boolean.getBoolean(PreferenceConstants.PREF_PY4J_ACTIVE); // They can override the default using -DPREF_PY4J_ACTIVE=...
 		if (!enabled && !override)
 			return;
 
-		int defaultPort = getPreferenceStore().getInt(PreferenceConstants.PREF_DEFAULT_PORT);
+		int defaultPort = store.getInt(PreferenceConstants.PREF_DEFAULT_PORT);
 		if (defaultPort < 1) {
 			defaultPort = GatewayServer.DEFAULT_PORT;
 		}
+		if (!isPortFree(defaultPort)) {
+			defaultPort = getFreePort(defaultPort);
+			store.setValue(PreferenceConstants.PREF_DEFAULT_PORT, defaultPort);
+		}
 
-		int defaultCallBackPort = getPreferenceStore().getInt(PreferenceConstants.PREF_DEFAULT_CALLBACK_PORT);
+		int defaultCallBackPort = store.getInt(PreferenceConstants.PREF_DEFAULT_CALLBACK_PORT);
 		if (defaultCallBackPort < 1) {
 			defaultCallBackPort = GatewayServer.DEFAULT_PYTHON_PORT;
 		}
+		if (!isPortFree(defaultCallBackPort)) {
+			defaultCallBackPort = getFreePort(defaultCallBackPort);
+			store.setValue(PreferenceConstants.PREF_DEFAULT_CALLBACK_PORT, defaultCallBackPort);
+		}
 
-		if (getPreferenceStore().getBoolean(PreferenceConstants.PREF_USE_SWT_DISPLAY_THREAD)) {
-
-			server = new SWTGatewayServer(this, getFreePort(defaultPort),
-					getFreePort(defaultCallBackPort),
+		if (store.getBoolean(PreferenceConstants.PREF_USE_SWT_DISPLAY_THREAD)) {
+			server = new SWTGatewayServer(this, defaultPort, defaultCallBackPort,
 					GatewayServer.DEFAULT_CONNECT_TIMEOUT,
 					GatewayServer.DEFAULT_READ_TIMEOUT, null);
 
@@ -63,7 +71,12 @@ public class DefaultServerActivator extends AbstractUIPlugin {
 					GatewayServer.DEFAULT_CONNECT_TIMEOUT,
 					GatewayServer.DEFAULT_READ_TIMEOUT, null);
 		}
-		server.start();
+
+		try {
+			server.start();
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 	}
 
 	/**
@@ -154,5 +167,4 @@ public class DefaultServerActivator extends AbstractUIPlugin {
 			}
 		});
 	}
-
 }
